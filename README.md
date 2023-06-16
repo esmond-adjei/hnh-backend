@@ -1,9 +1,6 @@
 # HNH BACKEND
 A Django based backend for the hnh accommodation app.
-![django]("https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/django.svg")
-
----
-The frontend is at [hnh-accommodation](https://github.com/esmond-adjei)
+The frontend is at [hnh-accommodation](https://github.com/esmond-adjei/hnh-accommodation)
 
 ---
 # Hostel Accommodation App
