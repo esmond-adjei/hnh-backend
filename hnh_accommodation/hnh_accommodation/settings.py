@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     # custom apps
     'usermanagement',
 
@@ -91,7 +90,10 @@ DATABASES = {
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 AUTH_USER_MODEL = 'usermanagement.HUser'
 
-AUTHENTICATION_BACKENDS = 'usermanagement.backends.EmailBackend'
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    #'usermanagement.backends.EmailBackend',
+]
 
 AUTH_PASSWORD_VALIDATORS = [
     {
