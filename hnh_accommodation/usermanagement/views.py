@@ -7,7 +7,7 @@ from .serializers import UserSerializer
 
 @api_view(['POST'])
 def register(request):
-    serializer = UserSerializer(data=request.data)  # -xxx
+    serializer = UserSerializer(data=request.data)
 
     if serializer.is_valid():
         user = serializer.save()
