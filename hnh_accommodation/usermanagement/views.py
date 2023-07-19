@@ -5,9 +5,9 @@ from rest_framework import status
 from .serializers import UserSerializer
 
 
-@api_view(['POST'])  # SIGN UP
+@api_view(['POST'])
 def register(request):
-    serializer = UserSerializer(data=request.data)
+    serializer = UserSerializer(data=request.data)  # -xxx
 
     if serializer.is_valid():
         user = serializer.save()
@@ -22,13 +22,13 @@ def register(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST'])  # SIGN IN
+@api_view(['POST'])
 def login(request):
     username = request.data.get('username')
     password = request.data.get('password')
 
     # Authenticate user
-    print(request, '\n' + f"- Username: {username}\n- Password: {password}")
+    print(f"- Username: {username}\n- Password: {password}")
     user = authenticate(request, username=username, password=password)
 
     if user is not None:

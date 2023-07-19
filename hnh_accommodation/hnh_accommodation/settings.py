@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # custom apps
     'usermanagement',
+    'hostel',
 
     # dependency apps
     'corsheaders',
