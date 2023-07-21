@@ -9,6 +9,7 @@ from .serializers import UserSerializer
 def register(request):
     serializer = UserSerializer(data=request.data)
 
+    print(f"Request data: {request.data}")
     if serializer.is_valid():
         user = serializer.save()
         response_data = {

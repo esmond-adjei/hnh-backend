@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Hostel
+from .models import Hostel, Room, Facility
 
 
 class HostelSerializer(serializers.ModelSerializer):
@@ -8,7 +8,6 @@ class HostelSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     # This is optional
-
     def validate_rating(self, value):
         if value < 0 or value > 5:
             raise serializers.ValidationError(
@@ -25,3 +24,18 @@ class HostelSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data['available_rooms'] = available_rooms_representation
         return data
+
+
+class FacilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Facility
+        fields = '__all__'
+
+
+class RoomSerializer(serializers.ModelSerializer):
+    facilities = FacilitySerializer(many=True)
+    hostel = serializers.StringRelatedField()
+
+    class Meta:
+        model = Room
+        fields = '__all__'
