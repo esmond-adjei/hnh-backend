@@ -18,14 +18,14 @@ def search(request):
             Q(name__icontains=search_query) | Q(
                 location__icontains=search_query)
         )
-        room_results = Room.objects.filter(
-            Q(hostel__name__icontains=search_query) |
-            Q(bedspace__icontains=search_query) |
-            Q(description__icontains=search_query)
-        )
+        # room_results = Room.objects.filter(
+        #     Q(hostel__name__icontains=search_query) |
+        #     Q(bedspace__icontains=search_query) |
+        #     Q(description__icontains=search_query)
+        # )
     else:
         hostel_results = Hostel.objects.none()
-        room_results = Room.objects.none()
+        # room_results = Room.objects.none()
 
     # Apply filtering to search results
     filter_params = request.query_params.dict()
@@ -33,14 +33,15 @@ def search(request):
     if filter_params:
         hostel_results = HostelFilter(
             filter_params, queryset=hostel_results).qs
-        room_results = RoomFilter(filter_params, queryset=room_results).qs
+        # room_results = RoomFilter(filter_params, queryset=room_results).qs
 
     hostel_serializer = HostelSerializer(hostel_results, many=True)
-    room_serializer = RoomSerializer(room_results, many=True)
+    # room_serializer = RoomSerializer(room_results, many=True)
 
+    # print(f"hostelResults: {hostel_serializer.data}")
     return Response({
-        'hostel-results': hostel_serializer.data,
-        'room-results': room_serializer.data,
+        'hostelResults': hostel_serializer.data,
+        # 'room-results': room_serializer.data,
     }, status=status.HTTP_200_OK)
 
 
@@ -82,6 +83,7 @@ def hostel_detail(request, hostel_id):
 @api_view(['POST'])
 def create_hostel(request):
     serializer = HostelSerializer(data=request.data)
+    print("request.data: ", request.data)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)

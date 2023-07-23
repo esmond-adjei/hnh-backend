@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Hostel, Room, Facility
+from .models import Hostel, Room, Amenity
 
 
 class HostelSerializer(serializers.ModelSerializer):
@@ -26,14 +26,14 @@ class HostelSerializer(serializers.ModelSerializer):
         return data
 
 
-class FacilitySerializer(serializers.ModelSerializer):
+class AmenitySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Facility
+        model = Amenity
         fields = '__all__'
 
 
 class RoomSerializer(serializers.ModelSerializer):
-    facilities = FacilitySerializer(many=True)
+    amenities = AmenitySerializer(many=True)
     hostel = serializers.StringRelatedField()
 
     class Meta:

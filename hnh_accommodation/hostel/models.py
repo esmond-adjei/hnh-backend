@@ -16,7 +16,7 @@ class Hostel(models.Model):
     location = models.CharField(max_length=100)
     available_rooms = models.IntegerField(default=0)
     rating = models.FloatField(
-        validators=[MinValueValidator(1.0), MaxValueValidator(5.0)])
+        validators=[MinValueValidator(1.0), MaxValueValidator(5.0)], default=2.50, blank=True, null=True)
     description = models.TextField(max_length=1000, blank=True)
 
     @property
@@ -27,7 +27,7 @@ class Hostel(models.Model):
         return self.name
 
 
-class Facility(models.Model):
+class Amenity(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
@@ -54,7 +54,7 @@ class Room(models.Model):
     bedspace = models.CharField(max_length=10, choices=BEDSPACE_CHOICES)
     sex = models.CharField(max_length=10, choices=SEX_CHOICES)
     number_available = models.IntegerField(default=1)
-    facilities = models.ManyToManyField(Facility, blank=True)
+    amenities = models.ManyToManyField(Amenity, blank=True)
     description = models.TextField(max_length=1000, blank=True)
 
     def __str__(self):
