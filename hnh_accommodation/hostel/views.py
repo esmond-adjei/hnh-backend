@@ -9,40 +9,52 @@ from django.db.models import Q
 
 # SEARCH VIEWS
 @api_view(['GET'])
-def search(request):
+def search_hostels(request):
     search_query = request.query_params.get('q', None)
 
     if search_query:
-        # Perform a generalized search using Q objects on relevant fields
         hostel_results = Hostel.objects.filter(
             Q(name__icontains=search_query) | Q(
                 location__icontains=search_query)
         )
-        # room_results = Room.objects.filter(
-        #     Q(hostel__name__icontains=search_query) |
-        #     Q(bedspace__icontains=search_query) |
-        #     Q(description__icontains=search_query)
-        # )
-    else:
-        hostel_results = Hostel.objects.none()
-        # room_results = Room.objects.none()
 
-    # Apply filtering to search results
+    else:
+        hostel_results = Hostel.objects.all()
+
     filter_params = request.query_params.dict()
     filter_params.pop('q', None)
     if filter_params:
         hostel_results = HostelFilter(
             filter_params, queryset=hostel_results).qs
-        # room_results = RoomFilter(filter_params, queryset=room_results).qs
 
     hostel_serializer = HostelSerializer(hostel_results, many=True)
-    # room_serializer = RoomSerializer(room_results, many=True)
+    print(hostel_serializer.data)
+    return Response({'hostelResults': hostel_serializer.data}, status=status.HTTP_200_OK)
 
-    # print(f"hostelResults: {hostel_serializer.data}")
-    return Response({
-        'hostelResults': hostel_serializer.data,
-        # 'room-results': room_serializer.data,
-    }, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def search_rooms(request):
+    search_query = request.query_params.get('q', None)
+
+    if search_query:
+        room_results = Room.objects.filter(
+            Q(hostel__name__icontains=search_query) |
+            Q(bedspace__icontains=search_query) |
+            Q(sex__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
+    else:
+        room_results = Room.objects.all()
+
+    # Apply filtering to search results
+    filter_params = request.query_params.dict()
+    filter_params.pop('q', None)
+    if filter_params:
+        room_results = RoomFilter(filter_params, queryset=room_results).qs
+
+    room_serializer = RoomSerializer(room_results, many=True)
+
+    return Response({'roomResults': room_serializer.data}, status=status.HTTP_200_OK)
 
 
 # FILTER VIEWS
@@ -115,7 +127,14 @@ def delete_hostel(request, hostel_id):
     return Response({'message': 'Hostel deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
 
 
-# Room views
+# ----------------- Room views ---------------------------------
+@api_view(['GET'])
+def all_rooms_list(request):
+    rooms = Room.objects.all()
+    serializer = RoomSerializer(rooms, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 @api_view(['GET'])
 def room_list(request, hostel_id):
     try:

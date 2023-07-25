@@ -12,6 +12,7 @@ class Hostel(models.Model):
         related_name='hostels_managed'
     )
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    hostel_img_url = models.CharField(max_length=200, blank=True)
     name = models.CharField(max_length=64)
     location = models.CharField(max_length=100)
     available_rooms = models.IntegerField(default=0)
@@ -49,6 +50,7 @@ class Room(models.Model):
 
     hostel = models.ForeignKey('Hostel', on_delete=models.CASCADE)
     # there might be conflict here in the future. we'll come back
+    room_img_url = models.CharField(max_length=200, blank=True)
     room_id = models.CharField(max_length=10, unique=True, primary_key=True)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     bedspace = models.CharField(max_length=10, choices=BEDSPACE_CHOICES)

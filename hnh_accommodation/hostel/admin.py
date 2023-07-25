@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Hostel, Room
+from .models import Hostel, Room, Amenity
 # Register your models here.
 
 
@@ -14,3 +14,4 @@ class RoomPanel(admin.ModelAdmin):
 
 admin.site.register(Hostel, HostelPanel)
 admin.site.register(Room, RoomPanel)
+admin.site.register(Amenity)
