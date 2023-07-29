@@ -1,5 +1,6 @@
 import uuid
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth import get_user_model
 from django.db import models
 
 
@@ -45,9 +46,24 @@ class HGuest(HUser):
     emergency_contact_phone = models.CharField(
         blank=True, null=True, max_length=20)
     special_requests = models.TextField(blank=True, null=True)
+    collections = models.ManyToManyField('Collection', related_name='users')
 
     def __str__(self):
         return f"{self.full_name} - Guest ID: {self.id}"
 
     class Meta:
         verbose_name, verbose_name_plural = "Guest", "Guests"
+
+
+
+class Collection(models.Model):
+    """
+    Class model for Collection.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=125)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='collections')
+    rooms = models.ManyToManyField('hostel.Room', related_name='collections')
+
+    def __str__(self):
+        return f"Collection {self.id} for {self.user}"

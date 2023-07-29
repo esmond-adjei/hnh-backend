@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import HManager, HGuest
+from .models import HManager, HGuest, Collection
+from hostel.serializers import RoomSerializer
+# from hostel.models import Room
+
 
 User = get_user_model()  # xxx
 
@@ -52,3 +55,12 @@ class UserSerializer(serializers.ModelSerializer):
             return user
         else:
             raise serializers.ValidationError(serializer.errors)
+
+
+
+class CollectionSerializer(serializers.ModelSerializer):
+    rooms = RoomSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Collection
+        fields = ['id', 'name', 'user', 'rooms']

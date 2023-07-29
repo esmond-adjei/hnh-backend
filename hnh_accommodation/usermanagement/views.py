@@ -1,3 +1,8 @@
+
+from .models import HUser, Collection
+from hostel.models import Room
+from .serializers import CollectionSerializer
+
 from django.contrib.auth import authenticate, login as django_login
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -40,3 +45,56 @@ def login(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response({'message': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+# USER COLLECTIONS
+@api_view(['GET'])
+def user_collections(request, user_id):
+    user_collections = Collection.objects.filter(user=user_id)
+    serializer = CollectionSerializer(user_collections, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def add_to_collection(request, user_id):
+    print(f"Request data: {request.data}")
+    print(f"User id: {user_id}")
+    try:
+        user = HUser.objects.get(id=user_id)
+    except HUser.DoesNotExist:
+        return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    if 'room_id' not in request.data:
+        return Response({'message': 'room_id field is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        room = Room.objects.get(room_id=request.data.get('room_id'))
+    except Room.DoesNotExist:
+        return Response({'message': 'Room not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    collection, _ = Collection.objects.get_or_create(user=user)
+    collection.rooms.add(room)
+
+    return Response({'message': 'Room added to collection successfully'}, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+def remove_from_collection(request, user_id):
+    print(f"Request data: {request.data}")
+    print(f"User id: {user_id}")
+    try:
+        user = HUser.objects.get(id=user_id)
+    except HUser.DoesNotExist:
+        return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    if 'room_id' not in request.data:
+        return Response({'message': 'room_id field is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        room = Room.objects.get(room_id=request.data.get('room_id'))
+    except Room.DoesNotExist:
+        return Response({'message': 'Room not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    collection, _ = Collection.objects.get_or_create(user=user)
+    collection.rooms.remove(room)
+
+    return Response({'message': 'Room removed from collection successfully'}, status=status.HTTP_200_OK)

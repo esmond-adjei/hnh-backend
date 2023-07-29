@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     # dependency apps
     'corsheaders',
     'rest_framework',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -67,6 +68,9 @@ MIDDLEWARE = [
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 }
 
@@ -100,8 +104,17 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    },
+    'secondary': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'your_database_name',
+        'USER': 'postgres',
+        'PASSWORD': 'your_postgres_password',
+        'HOST': 'localhost',  # If your database is on a different host, specify the IP or domain here.
+        'PORT': '',  # Leave empty to use the default port (usually 5432).
     }
 }
+
 
 
 # Password validation

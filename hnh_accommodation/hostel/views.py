@@ -7,7 +7,7 @@ from .filters import HostelFilter, RoomFilter
 from django.db.models import Q
 
 
-# SEARCH VIEWS
+# -------------------------- SEARCH VIEWS --------------------------
 @api_view(['GET'])
 def search_hostels(request):
     search_query = request.query_params.get('q', None)
@@ -57,7 +57,7 @@ def search_rooms(request):
     return Response({'roomResults': room_serializer.data}, status=status.HTTP_200_OK)
 
 
-# FILTER VIEWS
+# ------------------ FILTER VIEWS -----------------------
 @api_view(['GET'])
 def filter_hostels(request):
     hostels = Hostel.objects.all()
@@ -147,6 +147,17 @@ def room_list(request, hostel_id):
 
 
 @api_view(['GET'])
+def room_list_by_id(request, room_id):
+    try:
+        rooms = Room.objects.filter(id=room_id)
+    except Room.DoesNotExist:
+        return Response({'message': 'Rooms not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = RoomSerializer(rooms, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
 def room_detail(request, hostel_id, room_id):
     try:
         room = Room.objects.get(hostel__id=hostel_id, room_id=room_id)
@@ -159,13 +170,10 @@ def room_detail(request, hostel_id, room_id):
 
 @api_view(['POST'])
 def create_room(request, hostel_id):
-    # Retrieve the hostel based on hostel_id
     try:
         hostel = Hostel.objects.get(id=hostel_id)
     except Hostel.DoesNotExist:
         return Response({'message': 'Hostel not found'}, status=status.HTTP_404_NOT_FOUND)
-
-    # Assign the hostel to the room
     request.data['hostel'] = hostel.id
 
     serializer = RoomSerializer(data=request.data)
