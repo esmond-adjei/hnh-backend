@@ -49,7 +49,7 @@ class HGuest(HUser):
     collections = models.ManyToManyField('Collection', related_name='users')
 
     def __str__(self):
-        return f"{self.full_name} - Guest ID: {self.id}"
+        return f"{self.username} - Guest ID: {self.id}"
 
     class Meta:
         verbose_name, verbose_name_plural = "Guest", "Guests"

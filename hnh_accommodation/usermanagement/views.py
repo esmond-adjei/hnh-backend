@@ -2,26 +2,40 @@
 from .models import HUser, Collection
 from hostel.models import Room
 from .serializers import CollectionSerializer
+from .serializers import UserSerializer
+from .views_auth import MyTokenObtainPairView
 
 from django.contrib.auth import authenticate, login as django_login
-from rest_framework.decorators import api_view
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserSerializer
+
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def register(request):
     serializer = UserSerializer(data=request.data)
 
-    print(f"Request data: {request.data}")
     if serializer.is_valid():
         user = serializer.save()
+
+        # Manually log in the user after successful registration
+        django_login(request, user)
+
+        # Generate access and refresh tokens
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+
+        # Include user information and access token in the response data
         response_data = {
-            'message': 'User registered successfully',
-            'user_id': user.id,
-            'username': user.username,
-            'email': user.email,
+            "refresh": str(refresh),
+            "access": access_token,
+            "user_id": str(user.id),
+            "username": user.username,
+            "email": user.email,
         }
         return Response(response_data, status=status.HTTP_201_CREATED)
     else:
@@ -34,15 +48,12 @@ def login(request):
     password = request.data.get('password')
 
     # Authenticate user
-    print(f"- Username: {username}\n- Password: {password}")
     user = authenticate(request, username=username, password=password)
 
     if user is not None:
         # Login the user
         django_login(request, user)
-        serializer = UserSerializer(user)
-        print(serializer.data)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return MyTokenObtainPairView.as_view()(request._request)
     else:
         return Response({'message': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
 
