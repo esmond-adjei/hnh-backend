@@ -1,8 +1,10 @@
 from rest_framework import serializers
 from .models import Hostel, Room, Amenity
+# , Gallery
 
 
 class HostelSerializer(serializers.ModelSerializer):
+    manager_username = serializers.SerializerMethodField()
     class Meta:
         model = Hostel
         fields = '__all__'
@@ -25,6 +27,12 @@ class HostelSerializer(serializers.ModelSerializer):
         data['available_rooms'] = available_rooms_representation
         return data
 
+    def get_manager_username(self, obj):
+        if obj.manager:
+            return obj.manager.username
+        else:
+            return 'unknown'
+
 
 class AmenitySerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,10 +40,34 @@ class AmenitySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+# class GallerySerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Gallery
+#         fields = ('image_url',)
+
+
+
 class RoomSerializer(serializers.ModelSerializer):
     amenities = AmenitySerializer(many=True)
     hostel = serializers.StringRelatedField()
+    is_collected = serializers.SerializerMethodField()
+    # gallery = GallerySerializer(many=True, required=False)
 
     class Meta:
         model = Room
         fields = '__all__'
+
+    def get_is_collected(self, obj):
+        user = self.context.get('request').user
+
+        if user.is_authenticated and user.collections.filter(rooms=obj).exists():
+            return True
+
+        return False
+    
+    # def create(self, validated_data):
+    #     gallery_data = validated_data.pop('gallery', [])
+    #     room = Room.objects.create(**validated_data)
+    #     for gallery_item in gallery_data:
+    #         Gallery.objects.create(room=room, **gallery_item)
+    #     return room

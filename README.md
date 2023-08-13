@@ -1,13 +1,20 @@
 # HNH BACKEND
+
 A Django based backend for the hnh accommodation app.
-The frontend is at [hnh-accommodation](https://github.com/esmond-adjei/hnh-accommodation)
+
+This is a Django-based web application for managing hostel accommodations. Checkout the frontend at [hnh-accommodation](https://github.com/esmond-adjei/hnh-accommodation)
+
+# Database Model
+
+![database-model](docs/entity-relationship-diagram.png)
+
+# User Flow Diagram
+
+![user-flow-diagram](docs/user-flow-diagram.png)
 
 ---
-# Hostel Accommodation App
 
-This is a Django-based web application for managing hostel accommodations.
-
-## Getting Started
+# Getting Started
 
 Follow the steps below to set up and run the project locally.
 
@@ -19,21 +26,25 @@ Follow the steps below to set up and run the project locally.
 ### Installation
 
 1. Clone the repository:
+
 ```
 git clone https://github.com/esmond-adjei/hnh-backend.git
 ```
 
 2. Navigate to the project directory:
+
 ```
 cd hnh_accommodation
 ```
 
 3. Create a virtual environment (optional by recommended):
+
 ```
 python3 -m venv <venv name>
 ```
 
 4. Activate the virtual environment:
+
 - For Linux or macOS:
   ```
   source venv/bin/activate
@@ -44,10 +55,10 @@ python3 -m venv <venv name>
   ```
 
 5. Install the Python dependencies:
+
 ```
 pip3 install -r requirements.txt
 ```
-
 
 ### Configuration
 
@@ -58,6 +69,7 @@ pip3 install -r requirements.txt
 ### Database Setup
 
 1. Apply the database migrations:
+
 ```
 python manage.py migrate
 ```
@@ -65,6 +77,7 @@ python manage.py migrate
 ### Running the App
 
 1. Start the Django development server:
+
 ```
 python manage.py runserver
 ```

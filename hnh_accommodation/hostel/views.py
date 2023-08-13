@@ -1,6 +1,8 @@
-from rest_framework.decorators import api_view
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
+
 from .models import Hostel, Room
 from .serializers import HostelSerializer, RoomSerializer
 from .filters import HostelFilter, RoomFilter
@@ -9,6 +11,7 @@ from django.db.models import Q
 
 # -------------------------- SEARCH VIEWS --------------------------
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def search_hostels(request):
     search_query = request.query_params.get('q', None)
 
@@ -28,11 +31,11 @@ def search_hostels(request):
             filter_params, queryset=hostel_results).qs
 
     hostel_serializer = HostelSerializer(hostel_results, many=True)
-    print(hostel_serializer.data)
     return Response({'hostelResults': hostel_serializer.data}, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def search_rooms(request):
     search_query = request.query_params.get('q', None)
 
@@ -59,6 +62,7 @@ def search_rooms(request):
 
 # ------------------ FILTER VIEWS -----------------------
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def filter_hostels(request):
     hostels = Hostel.objects.all()
     hostel_filter = HostelFilter(request.GET, queryset=hostels)
@@ -67,6 +71,7 @@ def filter_hostels(request):
 
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def filter_rooms(request):
     rooms = Room.objects.all()
     hostel_filter = RoomFilter(request.GET, queryset=rooms)
@@ -74,7 +79,9 @@ def filter_rooms(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+# ------------------ HOSTEL CRUD VIEWS -----------------------
 @api_view(['GET'])
+# @permission_classes([AllowAny])
 def hostel_list(request):
     hostels = Hostel.objects.all()
     serializer = HostelSerializer(hostels, many=True)
@@ -82,6 +89,7 @@ def hostel_list(request):
 
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def hostel_detail(request, hostel_id):
     try:
         hostel = Hostel.objects.get(id=hostel_id)
@@ -93,6 +101,7 @@ def hostel_detail(request, hostel_id):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create_hostel(request):
     serializer = HostelSerializer(data=request.data)
     print("request.data: ", request.data)
@@ -103,6 +112,7 @@ def create_hostel(request):
 
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def update_hostel(request, hostel_id):
     try:
         hostel = Hostel.objects.get(id=hostel_id)
@@ -117,6 +127,7 @@ def update_hostel(request, hostel_id):
 
 
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def delete_hostel(request, hostel_id):
     try:
         hostel = Hostel.objects.get(id=hostel_id)
@@ -127,11 +138,12 @@ def delete_hostel(request, hostel_id):
     return Response({'message': 'Hostel deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
 
 
-# ----------------- Room views ---------------------------------
+# ----------------- ROOM CRUD VIEWS ---------------------------------
 @api_view(['GET'])
 def all_rooms_list(request):
     rooms = Room.objects.all()
-    serializer = RoomSerializer(rooms, many=True)
+    # Pass the request object as part of the context when instantiating the serializer
+    serializer = RoomSerializer(rooms, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -142,7 +154,8 @@ def room_list(request, hostel_id):
     except Room.DoesNotExist:
         return Response({'message': 'Rooms not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = RoomSerializer(rooms, many=True)
+    # Pass the request object as part of the context when instantiating the serializer
+    serializer = RoomSerializer(rooms, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -153,7 +166,8 @@ def room_list_by_id(request, room_id):
     except Room.DoesNotExist:
         return Response({'message': 'Rooms not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = RoomSerializer(rooms, many=True)
+    # Pass the request object as part of the context when instantiating the serializer
+    serializer = RoomSerializer(rooms, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -164,11 +178,13 @@ def room_detail(request, hostel_id, room_id):
     except Room.DoesNotExist:
         return Response({'message': 'Room not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = RoomSerializer(room)
+    # Pass the request object as part of the context when instantiating the serializer
+    serializer = RoomSerializer(room, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create_room(request, hostel_id):
     try:
         hostel = Hostel.objects.get(id=hostel_id)
@@ -184,6 +200,7 @@ def create_room(request, hostel_id):
 
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def update_room(request, hostel_id, room_id):
     try:
         room = Room.objects.get(hostel__id=hostel_id, room_id=room_id)
@@ -198,6 +215,7 @@ def update_room(request, hostel_id, room_id):
 
 
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def delete_room(request, hostel_id, room_id):
     try:
         room = Room.objects.get(hostel__id=hostel_id, room_id=room_id)

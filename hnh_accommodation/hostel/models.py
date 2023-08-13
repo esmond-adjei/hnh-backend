@@ -50,7 +50,7 @@ class Room(models.Model):
 
     hostel = models.ForeignKey('Hostel', on_delete=models.CASCADE)
     # there might be conflict here in the future. we'll come back
-    room_img_url = models.CharField(max_length=200, blank=True)
+    room_img_url = models.CharField(max_length=200, blank=True, default="https://rnb.scene7.com/is/image/roomandboard/MHH_Liv_ES1021_0523?size=900,900&scl=1")
     room_id = models.CharField(max_length=10, unique=True, primary_key=True)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     bedspace = models.CharField(max_length=10, choices=BEDSPACE_CHOICES)
@@ -61,3 +61,12 @@ class Room(models.Model):
 
     def __str__(self):
         return f"Room {self.room_id} in {self.hostel.name}"
+    
+
+# class Gallery(models.Model):
+#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+#     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='gallery')
+#     image_url = models.CharField(max_length=200)
+
+#     def __str__(self):
+#         return f"Image {self.id} for Room {self.room.room_id}"

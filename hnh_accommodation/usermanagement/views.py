@@ -8,7 +8,7 @@ from .views_auth import MyTokenObtainPairView
 from django.contrib.auth import authenticate, login as django_login
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -22,14 +22,9 @@ def register(request):
     if serializer.is_valid():
         user = serializer.save()
 
-        # Manually log in the user after successful registration
         django_login(request, user)
-
-        # Generate access and refresh tokens
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
-
-        # Include user information and access token in the response data
         response_data = {
             "refresh": str(refresh),
             "access": access_token,
@@ -43,23 +38,22 @@ def register(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def login(request):
     username = request.data.get('username')
     password = request.data.get('password')
-
-    # Authenticate user
     user = authenticate(request, username=username, password=password)
 
     if user is not None:
-        # Login the user
         django_login(request, user)
         return MyTokenObtainPairView.as_view()(request._request)
     else:
         return Response({'message': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-# USER COLLECTIONS
+# ------------------ USER COLLECTIONS CRUD VIEWS -----------------------
 @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
 def user_collections(request, user_id):
     user_collections = Collection.objects.filter(user=user_id)
     serializer = CollectionSerializer(user_collections, many=True)
@@ -67,6 +61,7 @@ def user_collections(request, user_id):
 
 
 @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
 def add_to_collection(request, user_id):
     print(f"Request data: {request.data}")
     print(f"User id: {user_id}")
@@ -89,6 +84,7 @@ def add_to_collection(request, user_id):
     return Response({'message': 'Room added to collection successfully'}, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
 def remove_from_collection(request, user_id):
     print(f"Request data: {request.data}")
     print(f"User id: {user_id}")
