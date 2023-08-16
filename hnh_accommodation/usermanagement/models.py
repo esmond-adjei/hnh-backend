@@ -34,6 +34,19 @@ class HManager(HUser):
         verbose_name, verbose_name_plural = "Manager", "Managers"
 
 
+class Collection(models.Model):
+    """
+    Class model for Collection.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=125)
+    user = models.ForeignKey('HGuest', on_delete=models.CASCADE, related_name='collections')
+    rooms = models.ManyToManyField('hostel.Room', related_name='collections')
+
+    def __str__(self):
+        return f"Collection {self.id} for {self.user.username}"
+
+
 class HGuest(HUser):
     """
     Class model for Hostel Guest.
@@ -45,8 +58,7 @@ class HGuest(HUser):
         blank=True, null=True, max_length=255)
     emergency_contact_phone = models.CharField(
         blank=True, null=True, max_length=20)
-    special_requests = models.TextField(blank=True, null=True)
-    collections = models.ManyToManyField('Collection', related_name='users')
+    # collections = models.ManyToManyField('Collection', related_name='collected_by')
 
     def __str__(self):
         return f"{self.username} - Guest ID: {self.id}"
@@ -55,15 +67,3 @@ class HGuest(HUser):
         verbose_name, verbose_name_plural = "Guest", "Guests"
 
 
-
-class Collection(models.Model):
-    """
-    Class model for Collection.
-    """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=125)
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='collections')
-    rooms = models.ManyToManyField('hostel.Room', related_name='collections')
-
-    def __str__(self):
-        return f"Collection {self.id} for {self.user}"

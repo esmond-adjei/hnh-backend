@@ -53,18 +53,19 @@ def login(request):
 
 # ------------------ USER COLLECTIONS CRUD VIEWS -----------------------
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated]) # handled authenticated user
 def user_collections(request, user_id):
     user_collections = Collection.objects.filter(user=user_id)
-    serializer = CollectionSerializer(user_collections, many=True)
+    print(f"User collections: ", user_collections)
+    if user_collections is None:
+        return Response({'message': 'User has no collections'}, status=status.HTTP_404_NOT_FOUND)
+    serializer = CollectionSerializer(user_collections, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def add_to_collection(request, user_id):
-    print(f"Request data: {request.data}")
-    print(f"User id: {user_id}")
     try:
         user = HUser.objects.get(id=user_id)
     except HUser.DoesNotExist:
@@ -78,13 +79,13 @@ def add_to_collection(request, user_id):
     except Room.DoesNotExist:
         return Response({'message': 'Room not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    collection, _ = Collection.objects.get_or_create(user=user)
+    collection, _ = Collection.objects.create(user=user)
     collection.rooms.add(room)
 
     return Response({'message': 'Room added to collection successfully'}, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def remove_from_collection(request, user_id):
     print(f"Request data: {request.data}")
     print(f"User id: {user_id}")

@@ -60,6 +60,8 @@ class RoomSerializer(serializers.ModelSerializer):
     def get_is_collected(self, obj):
         user = self.context.get('request').user
 
+        print(f"==== COLLECTED FOR USER === {user}") # THE REQUEST PASSED DOES NOT HAVE THE USERS INFO APPENDED
+
         if user.is_authenticated and user.collections.filter(rooms=obj).exists():
             return True
 

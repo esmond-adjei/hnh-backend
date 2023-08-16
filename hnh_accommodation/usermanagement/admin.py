@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import HUser, HManager, HGuest
+from .models import HUser, HManager, HGuest, Collection
 
 
 class ManagerPanel(admin.ModelAdmin):
@@ -10,7 +10,20 @@ class ManagerPanel(admin.ModelAdmin):
 
     get_managed_hostels.short_description = 'Managed Hostels'
 
+class CollectionPanel(admin.ModelAdmin):
+    list_display = ('id', 'name', 'user', 'num_rooms')
 
-admin.site.register(HUser)
+    def num_rooms(self, obj):
+        return len([room for room in obj.rooms.all()])
+
+    num_rooms.short_description = 'Number of Rooms'
+
+
+class HUserPanel(admin.ModelAdmin):
+    list_display = ('username', 'email')
+
+
+admin.site.register(HUser, HUserPanel)
 admin.site.register(HManager, ManagerPanel)
 admin.site.register(HGuest)
+admin.site.register(Collection, CollectionPanel)

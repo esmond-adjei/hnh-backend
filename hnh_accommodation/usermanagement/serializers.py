@@ -59,7 +59,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class CollectionSerializer(serializers.ModelSerializer):
-    rooms = RoomSerializer(many=True, read_only=True)
+    rooms = RoomSerializer(many=True, read_only=True, context={'request': 'request'})
 
     class Meta:
         model = Collection

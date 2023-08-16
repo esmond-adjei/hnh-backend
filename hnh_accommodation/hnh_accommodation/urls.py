@@ -22,5 +22,5 @@ urlpatterns = [
     path('api/', include('usermanagement.urls')),
     path('api/', include('hostel.urls')),
     path('api/search/', include('hostel.search_urls')),
-    path('api/filter/', include('hostel.search_urls')),
+    path('api/filter/', include('hostel.search_urls')), # xx
 ]
