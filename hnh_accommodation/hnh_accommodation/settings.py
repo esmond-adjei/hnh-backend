@@ -74,6 +74,19 @@ REST_FRAMEWORK = {
     ],
 }
 
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'user_id',  # custom
+]
+
 CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'hnh_accommodation.urls'

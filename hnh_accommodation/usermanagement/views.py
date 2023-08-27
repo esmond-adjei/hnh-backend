@@ -1,5 +1,5 @@
 
-from .models import HUser, Collection
+from .models import HGuest, Collection
 from hostel.models import Room
 from .serializers import CollectionSerializer
 from .serializers import UserSerializer
@@ -56,7 +56,7 @@ def login(request):
 @permission_classes([IsAuthenticated]) # handled authenticated user
 def user_collections(request, user_id):
     user_collections = Collection.objects.filter(user=user_id)
-    print(f"User collections: ", user_collections)
+    print(f"_________User collections: ", user_collections)
     if user_collections is None:
         return Response({'message': 'User has no collections'}, status=status.HTTP_404_NOT_FOUND)
     serializer = CollectionSerializer(user_collections, many=True, context={'request': request})
@@ -67,8 +67,8 @@ def user_collections(request, user_id):
 @permission_classes([IsAuthenticated])
 def add_to_collection(request, user_id):
     try:
-        user = HUser.objects.get(id=user_id)
-    except HUser.DoesNotExist:
+        user = HGuest.objects.get(id=user_id)
+    except HGuest.DoesNotExist:
         return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
     if 'room_id' not in request.data:
@@ -90,8 +90,8 @@ def remove_from_collection(request, user_id):
     print(f"Request data: {request.data}")
     print(f"User id: {user_id}")
     try:
-        user = HUser.objects.get(id=user_id)
-    except HUser.DoesNotExist:
+        user = HGuest.objects.get(id=user_id)
+    except HGuest.DoesNotExist:
         return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
     if 'room_id' not in request.data:
