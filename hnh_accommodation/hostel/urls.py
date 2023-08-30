@@ -13,7 +13,7 @@ urlpatterns = [
          views.delete_hostel, name='delete-hostel'),
 
     # Room views
-    path('rooms/', views.all_rooms_list, name='all-room-list'),
+    path('rooms/', views.rooms_list_all, name='all-room-list'),
     path('hostel/<uuid:hostel_id>/rooms/', views.room_list, name='room-list'),
     path('hostel/<uuid:hostel_id>/rooms/<int:room_id>/',
          views.room_detail, name='room-detail'),

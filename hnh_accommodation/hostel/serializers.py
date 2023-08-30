@@ -50,6 +50,7 @@ class AmenitySerializer(serializers.ModelSerializer):
 class RoomSerializer(serializers.ModelSerializer):
     amenities = AmenitySerializer(many=True)
     hostel = serializers.StringRelatedField()
+    hostel_location = serializers.SerializerMethodField()
     is_collected = serializers.SerializerMethodField()
     # gallery = GallerySerializer(many=True, required=False)
 
@@ -59,14 +60,13 @@ class RoomSerializer(serializers.ModelSerializer):
 
     def get_is_collected(self, obj):
         user = self.context.get('request').user
-
-        print(f"=== COLLECTED FOR USER === {user}") # THE REQUEST PASSED DOES NOT HAVE THE USERS INFO APPENDED
-
         if user.is_authenticated and obj.collections.filter(user=user).exists():
             return True
-
         return False
-    
+
+    def get_hostel_location(self, obj):
+        return obj.hostel.location
+
     # def create(self, validated_data):
     #     gallery_data = validated_data.pop('gallery', [])
     #     room = Room.objects.create(**validated_data)

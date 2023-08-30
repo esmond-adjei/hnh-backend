@@ -56,7 +56,6 @@ def login(request):
 @permission_classes([IsAuthenticated]) # handled authenticated user
 def user_collections(request, user_id):
     user_collections = Collection.objects.filter(user=user_id)
-    print(f"_________User collections: ", user_collections)
     if user_collections is None:
         return Response({'message': 'User has no collections'}, status=status.HTTP_404_NOT_FOUND)
     serializer = CollectionSerializer(user_collections, many=True, context={'request': request})
@@ -66,6 +65,7 @@ def user_collections(request, user_id):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def add_to_collection(request, user_id):
+    print(f"Request data: {request.data}")
     try:
         user = HGuest.objects.get(id=user_id)
     except HGuest.DoesNotExist:
@@ -79,7 +79,7 @@ def add_to_collection(request, user_id):
     except Room.DoesNotExist:
         return Response({'message': 'Room not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    collection, _ = Collection.objects.create(user=user)
+    collection = Collection.objects.get_or_create(user=user)[0]
     collection.rooms.add(room)
 
     return Response({'message': 'Room added to collection successfully'}, status=status.HTTP_201_CREATED)
@@ -102,7 +102,7 @@ def remove_from_collection(request, user_id):
     except Room.DoesNotExist:
         return Response({'message': 'Room not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    collection, _ = Collection.objects.get_or_create(user=user)
+    collection = Collection.objects.get(user=user)
     collection.rooms.remove(room)
 
     return Response({'message': 'Room removed from collection successfully'}, status=status.HTTP_200_OK)

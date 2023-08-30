@@ -37,25 +37,25 @@ def search_hostels(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def search_rooms(request):
-    search_query = request.query_params.get('q', None)
+    filter_params = request.query_params.dict()
+    q = filter_params.pop('q', None)
 
-    if search_query:
+    if q:
         room_results = Room.objects.filter(
-            Q(hostel__name__icontains=search_query) |
-            Q(bedspace__icontains=search_query) |
-            Q(sex__icontains=search_query) |
-            Q(description__icontains=search_query)
+            Q(hostel__name__icontains=q) |
+            Q(bedspace__icontains=q) |
+            Q(sex__icontains=q) |
+            Q(description__icontains=q) |
+            Q(hostel__location__icontains=q)
         )
     else:
         room_results = Room.objects.all()
 
     # Apply filtering to search results
-    filter_params = request.query_params.dict()
-    filter_params.pop('q', None)
     if filter_params:
         room_results = RoomFilter(filter_params, queryset=room_results).qs
 
-    room_serializer = RoomSerializer(room_results, many=True)
+    room_serializer = RoomSerializer(room_results, many=True, context={'request': request})
 
     return Response({'roomResults': room_serializer.data}, status=status.HTTP_200_OK)
 
@@ -75,13 +75,13 @@ def filter_hostels(request):
 def filter_rooms(request):
     rooms = Room.objects.all()
     hostel_filter = RoomFilter(request.GET, queryset=rooms)
-    serializer = RoomSerializer(hostel_filter.qs, many=True)
+    serializer = RoomSerializer(hostel_filter.qs, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 # ------------------ HOSTEL CRUD VIEWS -----------------------
 @api_view(['GET'])
-# @permission_classes([AllowAny])
+@permission_classes([AllowAny])
 def hostel_list(request):
     hostels = Hostel.objects.all()
     serializer = HostelSerializer(hostels, many=True)
@@ -140,9 +140,8 @@ def delete_hostel(request, hostel_id):
 
 # ----------------- ROOM CRUD VIEWS ---------------------------------
 @api_view(['GET'])
-def all_rooms_list(request):
+def rooms_list_all(request):
     rooms = Room.objects.all()
-    # Pass the request object as part of the context when instantiating the serializer
     serializer = RoomSerializer(rooms, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -192,7 +191,7 @@ def create_room(request, hostel_id):
         return Response({'message': 'Hostel not found'}, status=status.HTTP_404_NOT_FOUND)
     request.data['hostel'] = hostel.id
 
-    serializer = RoomSerializer(data=request.data)
+    serializer = RoomSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
