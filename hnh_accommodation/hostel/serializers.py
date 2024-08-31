@@ -50,6 +50,7 @@ class AmenitySerializer(serializers.ModelSerializer):
 class RoomSerializer(serializers.ModelSerializer):
     amenities = AmenitySerializer(many=True)
     hostel = serializers.StringRelatedField()
+    hostel_id = serializers.StringRelatedField(source='hostel.id')
     hostel_location = serializers.SerializerMethodField()
     is_collected = serializers.SerializerMethodField()
     # gallery = GallerySerializer(many=True, required=False)
