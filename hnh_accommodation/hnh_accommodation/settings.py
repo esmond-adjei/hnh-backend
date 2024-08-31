@@ -35,11 +35,11 @@ ALLOWED_HOSTS = [
     # 'hostelfinder.vercel.app',
 ]
 
-
-
 # Application definition
-
 INSTALLED_APPS = [
+    # 'admin_interface',
+    # 'colorfield',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
-
+    
     # custom apps
     'usermanagement',
     'hostel',

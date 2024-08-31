@@ -14,9 +14,10 @@ from rest_framework import status
 
 
 
-# @api_view(['POST'])
+@api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
+    # print(f"Request data: {request.data}")
     serializer = UserSerializer(data=request.data)
 
     if serializer.is_valid():
