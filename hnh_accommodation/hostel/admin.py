@@ -1,7 +1,12 @@
 from django.contrib import admin
 from .models import Hostel, Room, Amenity
-# Register your models here.
 
+class CustomAdminSite(admin.AdminSite):
+    site_header = 'Campus Hostels Finder'
+    site_title = 'Campus Hostels Finder Admin Panel'
+    index_title = 'Welcome to Campus Hostels Finder Admin Panel'
+
+admin_site = CustomAdminSite(name='chfadmin')
 
 class HostelPanel(admin.ModelAdmin):
     list_display = ('name', 'location', 'rating', 'available_rooms')
@@ -12,6 +17,6 @@ class RoomPanel(admin.ModelAdmin):
                     'bedspace', 'number_available')
 
 
-admin.site.register(Hostel, HostelPanel)
-admin.site.register(Room, RoomPanel)
-admin.site.register(Amenity)
+admin_site.register(Hostel, HostelPanel)
+admin_site.register(Room, RoomPanel)
+admin_site.register(Amenity)

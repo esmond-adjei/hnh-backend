@@ -28,27 +28,33 @@ SECRET_KEY = 'django-insecure-lzj3niu2o_r+281dr^0d_s1^9l3s5m1)^x_j8&m&i3orwi6hz&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '*',
+    # 'localhost',
+    # '127.0.0.1',
+    # 'hostelfinder.vercel.app',
+]
+
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    # custom apps
-    'usermanagement',
-    'hostel',
-
-    # dependency apps
-    'corsheaders',
-    'rest_framework',
-    'rest_framework_simplejwt',
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # dependency apps
+    'corsheaders',
+    'rest_framework',
+    'rest_framework_simplejwt',
+
+    # custom apps
+    'usermanagement',
+    'hostel',
 ]
 
 MIDDLEWARE = [
@@ -85,11 +91,15 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
-    #'user_id', # custom
 ]
 
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+# CSRF_TRUSTED_ORIGINS = [
+#     'http://localhost:3000',
+# ]
+
 
 ROOT_URLCONF = 'hnh_accommodation.urls'
 

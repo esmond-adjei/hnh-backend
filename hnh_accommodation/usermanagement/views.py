@@ -14,7 +14,7 @@ from rest_framework import status
 
 
 
-@api_view(['POST'])
+# @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
     serializer = UserSerializer(data=request.data)

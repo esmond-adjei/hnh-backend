@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import HUser, HManager, HGuest, Collection
-
+from hostel.admin import admin_site
 
 class ManagerPanel(admin.ModelAdmin):
     list_display = ('username', 'email', 'get_managed_hostels')
@@ -23,7 +23,7 @@ class HUserPanel(admin.ModelAdmin):
     list_display = ('username', 'email')
 
 
-admin.site.register(HUser, HUserPanel)
-admin.site.register(HManager, ManagerPanel)
-admin.site.register(HGuest)
-admin.site.register(Collection, CollectionPanel)
+admin_site.register(HUser, HUserPanel)
+admin_site.register(HManager, ManagerPanel)
+admin_site.register(HGuest)
+admin_site.register(Collection, CollectionPanel)

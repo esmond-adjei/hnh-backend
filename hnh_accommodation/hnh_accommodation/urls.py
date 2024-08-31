@@ -17,8 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from hostel.admin import admin_site
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin_site.urls),
     path('api/', include('usermanagement.urls')),
     path('api/', include('hostel.urls')),
     path('api/search/', include('hostel.search_urls')),
