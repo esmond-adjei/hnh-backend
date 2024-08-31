@@ -19,7 +19,7 @@ class HGuestSerializer(serializers.ModelSerializer):
     class Meta:
         model = HGuest
         fields = ['id', 'username', 'email', 'password', 'check_in_date', 'check_out_date',
-                  'emergency_contact_name', 'emergency_contact_phone', 'special_requests']
+                  'emergency_contact_name', 'emergency_contact_phone']
         extra_kwargs = {'password': {'write_only': True}}
 
 

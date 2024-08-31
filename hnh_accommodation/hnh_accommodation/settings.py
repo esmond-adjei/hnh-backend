@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
-from rest_framework.permissions import AllowAny
+# from rest_framework.permissions import AllowAny
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -120,14 +120,14 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     },
-    'secondary': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'your_database_name',
-        'USER': 'postgres',
-        'PASSWORD': 'your_postgres_password',
-        'HOST': 'localhost',  # If your database is on a different host, specify the IP or domain here.
-        'PORT': '',  # Leave empty to use the default port (usually 5432).
-    }
+    # 'secondary': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'your_database_name',
+    #     'USER': 'postgres',
+    #     'PASSWORD': 'your_postgres_password',
+    #     'HOST': 'localhost',  # If your database is on a different host, specify the IP or domain here.
+    #     'PORT': '',  # Leave empty to use the default port (usually 5432).
+    # }
 }
 
 
